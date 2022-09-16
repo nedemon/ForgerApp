@@ -16,8 +16,8 @@ import tokenAddress from './contracts/TToken-contract-address.json'
 import tokenArtifact from './contracts/TToken.json'
 import forgerAddress from './contracts/Forger-contract-address.json'
 import forgerArtifact from './contracts/Forger.json'
-
 const HARDHAT_NETWORK_ID = '31337'
+const GOERLI_NETWORK_ID = '5'
 //const ERROR_CODE_TX_REJECTED_BY_USER = 4001
 
 function App() {
@@ -40,28 +40,31 @@ function App() {
         method: 'eth_requestAccounts'
       });
 
-      if (window.ethereum.networkVersion !== HARDHAT_NETWORK_ID) { 
+      if (window.ethereum.networkVersion !== HARDHAT_NETWORK_ID && 
+        window.ethereum.networkVersion !== GOERLI_NETWORK_ID) { 
         alert("Wrong network!!");
         return;
       }
       let provider = new ethers.providers.Web3Provider(window.ethereum)
-
+      
       const token = new ethers.Contract(
         tokenAddress.TToken,
         tokenArtifact.abi,
         provider.getSigner(0)
       );
-
+      
       const forger = new ethers.Contract(
         forgerAddress.Forger,
         forgerArtifact.abi,
         provider.getSigner(0)
       );
-      
+      console.log("TToken: " + token.address)
+      console.log("Forger: " + forger.address)
       setToken(token);
       setForger(forger);
 
-      if(window.ethereum && window.ethereum.networkVersion === HARDHAT_NETWORK_ID && token) {
+      if(window.ethereum && (window.ethereum.networkVersion === HARDHAT_NETWORK_ID ||
+        window.ethereum.networkVersion === GOERLI_NETWORK_ID) && token) {
         const [selectedAddress] = await window.ethereum.request({
           method: 'eth_requestAccounts'
         });
@@ -103,15 +106,15 @@ function App() {
     let transaction;
     switch(label) {
       case "Token 0":
-        transaction = await ForgerContract.mintBasic(0);
+        transaction = await ForgerContract.mintBasic(0, {gasLimit: '300000'});
         await transaction.wait();
         break;
       case "Token 1":
-        transaction = await ForgerContract.mintBasic(1);
+        transaction = await ForgerContract.mintBasic(1, {gasLimit: '300000'});
         await transaction.wait();
         break;
       case "Token 2":
-        transaction = await ForgerContract.mintBasic(2);
+        transaction = await ForgerContract.mintBasic(2, {gasLimit: '300000'});
         await transaction.wait();
         break;  
       default:

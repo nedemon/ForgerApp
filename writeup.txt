@@ -1,0 +1,19 @@
+❌ Reentrancy in Forger.mintBasic(uint256) (contracts/Forger.sol:26-32):
+	• myToken.mint(msg.sender,id,FIXED_AMOUNT,) (contracts/Forger.sol#30)
+	• mintingTimestamp[msg.sender] = block.timestamp (contracts/Forger.sol#31)
+
+❌ Parameter TToken.setMinter(address)._minter (contracts/TToken.sol:11) is not in mixedCase
+
+
+❌ Variable Forger.BASIC_TOKEN_ID_1 (contracts/Forger.sol:10) is too similar to Forger.BASIC_TOKEN_ID_2 (contracts/Forger.sol#11)
+
+
+Forger.mintBasic(uint256) (contracts/Forger.sol#26-32) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(mintingTimestamp[msg.sender] < block.timestamp,Minting timeout hasn't passed yet) (contracts/Forger.sol#28)
+Reentrancy in Forger.mintBasic(uint256) (contracts/Forger.sol#26-32):
+	External calls:
+	- myToken.mint(msg.sender,id,FIXED_AMOUNT,) (contracts/Forger.sol#30)
+	State variables written after the call(s):
+	- mintingTimestamp[msg.sender] = block.timestamp (contracts/Forger.sol#31)
+        
